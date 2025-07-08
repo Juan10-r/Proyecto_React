@@ -1,24 +1,35 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const usuarios = [
+  { email: "juan@correo.com", password: "jua123" },
+  { email: "maria@correo.com", password: "mar123" },
+  // Agrega los demás usuarios si quieres
+];
 
 function LoginPage() {
-  // Definir los estados para el formulario
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
 
-  // Función para manejar el envío del formulario
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Aquí puedes manejar la lógica de autenticación o llamada a una API
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Remember me:', remember);
+    const usuarioValido = usuarios.find(
+      (u) => u.email === email && u.password === password
+    );
 
-    // Limpia el formulario si es necesario
-    // setEmail('');
-    // setPassword('');
-    // setRemember(false);
+    if (usuarioValido) {
+      console.log('Inicio de sesión correcto');
+      if (remember) {
+        localStorage.setItem('usuario', JSON.stringify(usuarioValido));
+      }
+      navigate('/PaginaPrincipal'); // Ruta donde quieres ir
+    } else {
+      alert('Correo o contraseña incorrectos');
+    }
   };
 
   return (
@@ -35,7 +46,6 @@ function LoginPage() {
               placeholder="usuario@ejemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
 
@@ -48,7 +58,6 @@ function LoginPage() {
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
           </div>
 
@@ -70,13 +79,13 @@ function LoginPage() {
 
         <div className="card-footer text-center mt-3">
           <small className="text-muted">
-            ¿Olvidaste tu contraseña? <a href="./html/Recuperar.html">Reestablece</a>
+            ¿Olvidaste tu contraseña? <a href="/Recuperar">Reestablece</a>
           </small>
         </div>
 
         <div className="card-footer text-center mt-2">
           <small className="text-muted">
-            ¿No tienes cuenta? <a href="./html/login.html">Regístrate</a>
+            ¿No tienes cuenta? <a href="/Registrar">Regístrate</a>
           </small>
         </div>
       </div>

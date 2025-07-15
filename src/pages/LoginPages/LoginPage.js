@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth, googleProvider } from '../../Firebase';
+import { signInWithPopup } from 'firebase/auth';
+import Swal from 'sweetalert2';
+import './loginPage.css';
 
 const usuarios = [
   { email: "juan@correo.com", password: "jua123" },
@@ -32,10 +36,30 @@ function LoginPage() {
     }
   };
 
+  const handleGoogleLogin = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const user = result.user;
+        Swal.fire({
+          title: "¡Bienvenido!",
+          text: `Sesión iniciada con Google: ${user.email}`,
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = "/PaginaPrincipal";
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        Swal.fire("Error", "No se pudo iniciar sesión con Google", "error");
+      });
+  };
+
   return (
-    <div className="container vh-100 d-flex justify-content-center align-items-center">
+    <div className="login-container d-flex justify-content-center align-items-center">
       <div className="card p-4 shadow-sm" style={{ width: '100%', maxWidth: '400px' }}>
-        <h3 className="card-title text-center mb-4 text-success">Iniciar Sesión</h3>
+        <h3 className="card-title text-center mb-4 text-danger">Logueate ahora</h3>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Correo electrónico</label>
@@ -73,7 +97,12 @@ function LoginPage() {
           </div>
 
           <div className="card-footer text-center">
-            <button type="submit" className="btn btn-success w-100">Entrar</button>
+            <button type="submit" className="btn btn-danger w-100 mb-2">Entrar</button>
+            <div>
+              <button type="button" className='btn btn-danger w-100' onClick={handleGoogleLogin}>
+                Iniciar sesión con Google
+              </button>
+            </div>
           </div>
         </form>
 

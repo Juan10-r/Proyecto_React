@@ -1,0 +1,7 @@
+.login-container {
+    background-image: url('./../../imagenes/Anuel\ AA.jpg'); /* Cambia este color al que desees */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

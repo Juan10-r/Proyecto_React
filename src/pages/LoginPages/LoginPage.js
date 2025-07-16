@@ -1,59 +1,109 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth, googleProvider } from '../../Firebase';
-import { signInWithPopup } from 'firebase/auth';
+import { useState } from 'react';
 import Swal from 'sweetalert2';
+import { auth, googleProvider, db } from '../../Firebase';
+import { signInWithEmailAndPassword, fetchSignInMethodsForEmail, linkWithCredential, EmailAuthProvider, signInWithPopup } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import './loginPage.css';
-
-const usuarios = [
-  { email: "juan@correo.com", password: "jua123" },
-  { email: "maria@correo.com", password: "mar123" },
-  // Agrega los demás usuarios si quieres
-];
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
 
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
+  // LOGIN CON EMAIL/PASSWORD
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    const usuarioValido = usuarios.find(
-      (u) => u.email === email && u.password === password
-    );
+    if (!email || !password) {
+      Swal.fire("Campos vacíos", "Por favor llena todos los campos.", "warning");
+      return;
+    }
 
-    if (usuarioValido) {
-      console.log('Inicio de sesión correcto');
-      if (remember) {
-        localStorage.setItem('usuario', JSON.stringify(usuarioValido));
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Opcional: verificar si existe documento en Firestore
+      const userDocRef = doc(db, 'usuarios', user.uid);
+      const userSnap = await getDoc(userDocRef);
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        if (data.estado === "Inactivo") {
+          Swal.fire("Acceso denegado", "Tu cuenta está inactiva. Contacta al administrador.", "error");
+          return;
+        }
       }
-      navigate('/PaginaPrincipal'); // Ruta donde quieres ir
-    } else {
-      alert('Correo o contraseña incorrectos');
+
+      Swal.fire({
+        title: "¡Bienvenido!",
+        text: `Sesión iniciada como ${user.email}`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false
+      }).then(() => {
+        window.location.href = "/PaginaPrincipal";
+      });
+
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Credenciales incorrectas o usuario no existe.", "error");
+    }
+  }
+
+  // LOGIN CON GOOGLE
+  const handleGoogleLogin = async () => {
+    try {
+      const googleResult = await signInWithPopup(auth, googleProvider);
+      const user = googleResult.user;
+
+      // Verificar si ya existía ese correo con otro método
+      const signInMethods = await fetchSignInMethodsForEmail(auth, user.email);
+
+      if (signInMethods.includes('password')) {
+        // Si existe por password hay que vincularlo
+        const password = await solicitarPassword();
+        if (!password) {
+          Swal.fire("Cancelado", "Operación cancelada.", "info");
+          return;
+        }
+
+        // Crear credential de email/password
+        const credential = EmailAuthProvider.credential(user.email, password);
+        await linkWithCredential(user, credential);
+      }
+
+      Swal.fire({
+        title: "¡Bienvenido!",
+        text: `Sesión iniciada con Google: ${user.email}`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false
+      }).then(() => {
+        window.location.href = "/dashboard";
+      });
+
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "No se pudo iniciar sesión con Google.", "error");
     }
   };
 
-  const handleGoogleLogin = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        const user = result.user;
-        Swal.fire({
-          title: "¡Bienvenido!",
-          text: `Sesión iniciada con Google: ${user.email}`,
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => {
-          window.location.href = "/PaginaPrincipal";
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-        Swal.fire("Error", "No se pudo iniciar sesión con Google", "error");
-      });
+  const solicitarPassword = async () => {
+    const result = await Swal.fire({
+      title: "Contraseña requerida",
+      input: "password",
+      inputLabel: "Introduce tu contraseña para vincular cuentas",
+      inputPlaceholder: "Tu contraseña",
+      showCancelButton: true,
+      confirmButtonText: "Vincular",
+      cancelButtonText: "Cancelar"
+    });
+
+    if (result.isConfirmed && result.value) {
+      return result.value;
+    }
+    return null;
   };
 
   return (

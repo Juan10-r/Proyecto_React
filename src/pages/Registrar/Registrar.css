@@ -1,0 +1,82 @@
+/* Fondo con gradiente en tonos rojos */
+.bg-gradient {
+    background: linear-gradient(135deg, #ff0000, #8b3030);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* Tarjeta del formulario */
+.form-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+}
+
+/* Formulario centrado */
+.form-card form {
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Inputs modernos */
+.form-card input,
+.form-card select,
+.form-card textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+    border-color: #B22222;
+    box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.2);
+    outline: none;
+}
+
+/* Botón estilizado en rojo */
+.form-card button {
+    background-color: #B22222;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-card button:hover {
+    background-color: #8B1A1A;
+}
+
+/* Bordes verdes para inputs válidos */
+.is-valid {
+    border-color: #28a745 !important; /* Verde */
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Bordes rojos para inputs inválidos */
+.is-invalid {
+    border-color: #dc3545 !important; /* Rojo */
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}

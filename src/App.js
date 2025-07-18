@@ -7,6 +7,7 @@ import UseStateExample from './Playground/UseStateExample';
 import UseEffectExample from './Playground/UseEffectExample';
 import ProtectedRoute from './pages/components/ProtectedRoute';
 import NotFoundPage from './pages/components/NotFoundPage';
+import ResetPasswordPage from './pages/ResetPassword/ResetPassword';
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/Recuperar" element={<Recuperar />} />
         <Route path="/Registrar" element={<Registrar />} />
+        <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
         <Route path="/PaginaPrincipal" element={<ProtectedRoute> <PaginaPrincipal /> </ProtectedRoute>} />
         {/* Ruta genérica para páginas no encontradas */}

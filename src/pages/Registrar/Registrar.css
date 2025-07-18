@@ -68,15 +68,3 @@
 .form-card button:hover {
     background-color: #8B1A1A;
 }
-
-/* Bordes verdes para inputs válidos */
-.is-valid {
-    border-color: #28a745 !important; /* Verde */
-    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-}
-
-/* Bordes rojos para inputs inválidos */
-.is-invalid {
-    border-color: #dc3545 !important; /* Rojo */
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-}

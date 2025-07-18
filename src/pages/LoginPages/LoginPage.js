@@ -80,7 +80,7 @@ function LoginPage() {
         timer: 2000,
         showConfirmButton: false
       }).then(() => {
-        window.location.href = "/dashboard";
+        window.location.href = "/PaginaPrincipal";
       });
 
     } catch (error) {
